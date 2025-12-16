@@ -1,5 +1,6 @@
 # cd Desktop\web\Memo; .\daily_commit.ps1
 
+
 $OutputEncoding = [System.Text.Encoding]::UTF8
 $script:ErrorActionPreference = "Stop"
 
