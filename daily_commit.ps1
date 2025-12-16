@@ -1,14 +1,12 @@
 $OutputEncoding = [System.Text.Encoding]::UTF8
-$script:ErrorActionPreference = "Stop" # (추가: 오류 발생 시 스크립트 즉시 중단)
+$script:ErrorActionPreference = "Stop"
 
 # --- 설정 변수 ---
-$SourceDir = "NonRead"       # 커밋할 파일들이 들어있는 임시 폴더 이름
-$GitBranch = "main"                  # 사용하는 Git 브랜치 이름 (master 대신 main 사용 권장)
+$SourceDir = "NonRead"
+$GitBranch = "main"
 
 # --- 1. 오늘 날짜 포맷팅 (YYYYMMDD) ---
-# PowerShell에서 오늘 날짜를 YYYYMMDD 형식으로 가져옵니다.
 $Today = (Get-Date).ToString("yyyyMMdd")
-# YYYY/MM/DD 형식의 날짜 (커밋 메시지에 사용)
 $DateFormatted = (Get-Date).ToString("yyyy/MM/dd") 
 
 Write-Host "--- [Git Daily Archiver for Windows] ---"
@@ -17,7 +15,7 @@ Write-Host "오늘 날짜 폴더: $Today"
 # --- 2. 날짜 폴더 생성 ---
 if (-not (Test-Path -Path $Today -PathType Container)) {
     New-Item -Path $Today -ItemType Directory | Out-Null
-    Write-Host "✅ 날짜 디렉토리 ($Today) 생성 완료."
+    Write-Host "✅ 날짜 디렉토리 ($Today) 생성 완료." -ForegroundColor Green
 }
 
 # --- 3. 임시 폴더 확인 및 파일 이동 ---
@@ -30,25 +28,20 @@ if (-not (Test-Path -Path $SourceDir -PathType Container)) {
 # 임시 폴더가 비어있는지 확인
 $FilesToMove = Get-ChildItem -Path $SourceDir -Force
 if ($FilesToMove.Count -eq 0) {
-    Write-Host "⚠️ 경고: 임시 폴더 ($SourceDir)에 파일이 없습니다. 작업을 건너뜜." -ForegroundColor Yellow
+    Write-Host "⚠️ 경고: 임시 폴더 ($SourceDir)에 파일이 없습니다. 작업을 건너뜁니다." -ForegroundColor Yellow
     exit 0
 }
 
-Write-Host "➡️ 파일 이동 시작..."
-# 임시 폴더의 모든 파일을 날짜 폴더로 이동
-Move-Item -Path "$SourceDir\*" -Destination $Today -Force
-Write-Host "✅ 파일 이동 완료."
+Write-Host "➡️ 파일 이동 시작..." -ForegroundColor Cyan
+# !!! 폴더 중복 방지 수정 적용: $Today 뒤에 백슬래시(\) 추가 !!!
+Move-Item -Path "$SourceDir\*" -Destination "$Today\" -Force 
+Write-Host "✅ 파일 이동 완료." -ForegroundColor Green
 
 
 # --- 4. Git 작업 수행 ---
 Write-Host "➡️ Git 작업 시작 (Add, Commit, Push)..." -ForegroundColor Cyan
 
-# 모든 변경 사항 추가 (새로 생성된 폴더와 파일 포함)
 git add .
-
-# ----------------------------------------------------------------------
-# [수정된 부분: 사용자 입력 및 포맷 설정]
-# ----------------------------------------------------------------------
 
 # 사용자에게 키워드를 입력받습니다.
 $UserInput = Read-Host "커밋 키워드를 입력하세요 (예: DB, CODE, DOC 등)"
@@ -61,8 +54,6 @@ if ([string]::IsNullOrWhiteSpace($UserInput)) {
     # 입력이 있으면 'Archive: 날짜 키워드' 형식으로 설정
     $CommitMessage = "Archive: $DateFormatted $UserInput"
 }
-
-# ----------------------------------------------------------------------
 
 # 커밋 수행
 git commit -m $CommitMessage
