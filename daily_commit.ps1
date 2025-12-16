@@ -1,5 +1,8 @@
+$OutputEncoding = [System.Text.Encoding]::UTF8
+$script:ErrorActionPreference = "Stop" # (추가: 오류 발생 시 스크립트 즉시 중단)
+
 # --- 설정 변수 ---
-$SourceDir = "MEMO"       # 커밋할 파일들이 들어있는 임시 폴더 이름
+$SourceDir = "NonRead"       # 커밋할 파일들이 들어있는 임시 폴더 이름
 $GitBranch = "main"                  # 사용하는 Git 브랜치 이름 (master 대신 main 사용 권장)
 
 # --- 1. 오늘 날짜 포맷팅 (YYYYMMDD) ---
