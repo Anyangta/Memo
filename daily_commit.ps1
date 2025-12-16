@@ -47,7 +47,7 @@ Write-Host "➡️ Git 작업 시작 (Add, Commit, Push)..."
 git add .
 
 # 커밋 메시지 설정
-$CommitMessage = "Archive: $DateFormatted 작업 파일 정리 및 추가"
+$CommitMessage = "Archive: $DateFormatted Daily Log"
 
 # 커밋 수행
 git commit -m $CommitMessage
