@@ -41,13 +41,28 @@ Write-Host "✅ 파일 이동 완료."
 
 
 # --- 4. Git 작업 수행 ---
-Write-Host "➡️ Git 작업 시작 (Add, Commit, Push)..."
+Write-Host "➡️ Git 작업 시작 (Add, Commit, Push)..." -ForegroundColor Cyan
 
 # 모든 변경 사항 추가 (새로 생성된 폴더와 파일 포함)
 git add .
 
-# 커밋 메시지 설정
-$CommitMessage = "Archive: $DateFormatted Daily Log"
+# ----------------------------------------------------------------------
+# [수정된 부분: 사용자 입력 및 포맷 설정]
+# ----------------------------------------------------------------------
+
+# 사용자에게 키워드를 입력받습니다.
+$UserInput = Read-Host "커밋 키워드를 입력하세요 (예: DB, CODE, DOC 등)"
+
+# 사용자 입력이 있는지 확인
+if ([string]::IsNullOrWhiteSpace($UserInput)) {
+    # 입력이 없으면 기본 메시지 사용
+    $CommitMessage = "Archive: $DateFormatted Daily Log"
+} else {
+    # 입력이 있으면 'Archive: 날짜 키워드' 형식으로 설정
+    $CommitMessage = "Archive: $DateFormatted $UserInput"
+}
+
+# ----------------------------------------------------------------------
 
 # 커밋 수행
 git commit -m $CommitMessage
